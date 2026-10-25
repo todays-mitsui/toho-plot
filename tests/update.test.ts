@@ -105,3 +105,16 @@ describe('runUpdate', () => {
     await expect(update(LOG, { tripId: '../../etc' })).rejects.toThrow(/未登録/);
   });
 });
+
+describe('fetchArticle', () => {
+  it('未登録ホストへの転送は、articleUrlの更新を促すエラーにする', async () => {
+    const { fetchArticle } = await import('../src/generator/fetch.ts');
+    const fakeFetch = (async () =>
+      Object.defineProperty(new Response('<html></html>', { headers: { 'Content-Type': 'text/html' } }), 'url', {
+        value: 'https://blog.example.org/entry/1',
+      })) as typeof fetch;
+    await expect(
+      fetchArticle('https://example.hatenablog.com/entry/1', { allowedHosts: new Set(['example.hatenablog.com']), fetch: fakeFetch }),
+    ).rejects.toThrow(/trips\.json の articleUrl を転送先/);
+  });
+});

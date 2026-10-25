@@ -16,7 +16,16 @@ export async function fetchArticle(url: string, options: FetchArticleOptions): P
     signal: AbortSignal.timeout(options.timeoutMs ?? DEFAULT_TIMEOUT_MS),
   });
   // リダイレクト後のURLも登録ホストに限る
-  if (response.url) assertAllowed(response.url, options.allowedHosts);
+  if (response.url && response.url !== url) {
+    try {
+      assertAllowed(response.url, options.allowedHosts);
+    } catch {
+      throw new Error(
+        `記事URLが登録されていないホストへ転送されました: ${url} → ${response.url}。` +
+          'ブログのドメインが変わった場合は trips.json の articleUrl を転送先のURLに更新してください',
+      );
+    }
+  }
   if (!response.ok) throw new Error(`記事の取得に失敗しました: HTTP ${response.status} ${url}`);
   const contentType = response.headers.get('content-type') ?? '';
   if (!contentType.includes('text/html')) throw new Error(`記事がHTMLではありません (${contentType}): ${url}`);

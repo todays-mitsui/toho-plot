@@ -136,7 +136,7 @@ GitHub → Settings → Developer settings → Fine-grained personal access toke
 {
   "tripId": "英小文字・数字・ハイフン",
   "title": "記事タイトル",
-  "articleUrl": "https://todays-mitsui.hatenablog.com/entry/...",
+  "articleUrl": "https://blog.mudatobunka.org/entry/...",
   "journeyDate": "YYYY-MM-DD",
   "timeZone": "Asia/Tokyo",
   "routingProfile": "foot-walking"
@@ -144,6 +144,7 @@ GitHub → Settings → Developer settings → Fine-grained personal access toke
 ```
 
 - `journeyDate` は旅の日付です。記事の公開日とは別に指定します。
+- `articleUrl` はブラウザで開いたときの最終的なURL（記事の正規URL）にします。転送される旧URLを登録すると、転送先が未登録のホストとしてエラーになります。
 - 日付をまたいだ地点は自動では推測しません。`"dateOverrides": { "<pointId>": "YYYY-MM-DD" }` で指定します。時刻が逆転するとJob Summaryに警告が出ます。
 - 他の記事への自動巡回はしません。公開する記事はここに登録したものだけです。
 
