@@ -1,0 +1,30 @@
+name: CI
+
+# テストとビルドのみ。公開は update-map.yml に一本化している
+on:
+  push:
+    branches-ignore: [generated-data]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      # 生成データなしでもビルドできること（公開はしない）
+      - run: npm run build

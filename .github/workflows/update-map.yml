@@ -1,0 +1,149 @@
+name: Update map
+
+# 手動 (Run workflow) または iOS ショートカットからの workflow_dispatch で起動する。
+# 記事取得 → 差分ルート計算 → generated-data へ保存 → GitHub Pages へ公開 を1つのworkflowで行う。
+on:
+  workflow_dispatch:
+    inputs:
+      trip_id:
+        description: 'trips.json に登録済みの tripId'
+        required: true
+        type: string
+        default: takamatsu-tokushima-20260315
+      force_reroute:
+        description: 'この旅の全区間を再計算する'
+        required: false
+        type: boolean
+        default: false
+      allow_removal:
+        description: '前回より地点数が減っても公開する'
+        required: false
+        type: boolean
+        default: false
+
+# 更新・公開を直列化する。実行中の保存・公開は途中キャンセルしない
+concurrency:
+  group: update-and-publish-map
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout source (default branch)
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Checkout generated-data
+        id: data
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          # 各実行の開始時に最新の generated-data を読み直す
+          if git ls-remote --exit-code --heads origin generated-data > /dev/null; then
+            git fetch --no-tags --depth=1 origin generated-data
+            git worktree add --detach data FETCH_HEAD
+          else
+            echo '::notice::generated-data ブランチがないため初期化します'
+            git worktree add --orphan -b generated-data data
+          fi
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Update map data
+        id: update
+        # workflow入力はシェルに展開せず環境変数でCLIに渡し、CLI側で登録済みtripIdか検証する
+        env:
+          TRIP_ID: ${{ inputs.trip_id }}
+          FORCE_REROUTE: ${{ inputs.force_reroute }}
+          ALLOW_REMOVAL: ${{ inputs.allow_removal }}
+          DATA_DIR: data
+          ROUTING_API_KEY: ${{ secrets.ROUTING_API_KEY }}
+          ROUTING_API_BASE_URL: ${{ vars.ROUTING_API_BASE_URL }}
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: npm run update
+
+      - name: Typecheck and test
+        run: |
+          npm run typecheck
+          npm test
+
+      - name: Build site
+        env:
+          DATA_DIR: data
+          PAGES_BASE_PATH: ${{ vars.PAGES_BASE_PATH }}
+          VITE_TILE_URL: ${{ vars.TILE_URL }}
+          VITE_TILE_ATTRIBUTION: ${{ vars.TILE_ATTRIBUTION }}
+        run: npm run build
+
+      - name: Check that no secret is published
+        env:
+          ROUTING_API_KEY: ${{ secrets.ROUTING_API_KEY }}
+        run: |
+          if [ -n "$ROUTING_API_KEY" ] && grep -rqF -- "$ROUTING_API_KEY" dist data; then
+            echo '::error::APIキーが公開物または生成データに含まれています'
+            exit 1
+          fi
+
+      - name: Save generated data
+        run: |
+          cd data
+          git add -A
+          if git diff --cached --quiet; then
+            echo '生成データに変更はありません'
+          else
+            git commit -q -m "Update ${TRIP_ID} (run ${GITHUB_RUN_ID})"
+            # 競合時は失敗させる（force pushしない）
+            git push origin HEAD:refs/heads/generated-data
+          fi
+        env:
+          TRIP_ID: ${{ inputs.trip_id }}
+
+      - name: Save route cache from failed run
+        # 公開データ (trips/) は変更せず、取得済みのルートだけ保存して再実行時に再利用する
+        if: failure() && steps.data.outcome == 'success'
+        run: |
+          cd data
+          git add --ignore-removal routes 2> /dev/null || exit 0
+          if ! git diff --cached --quiet; then
+            git commit -q -m "Save route cache from failed run ${GITHUB_RUN_ID}"
+            git push origin HEAD:refs/heads/generated-data
+          fi
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    needs: update
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # 内容が不変でも毎回デプロイし、前回の公開失敗を取り戻す
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
+
+      - name: Summary
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+          TRIP_ID: ${{ inputs.trip_id }}
+        run: |
+          echo "公開URL: ${PAGE_URL}?trip=${TRIP_ID}" >> "$GITHUB_STEP_SUMMARY"

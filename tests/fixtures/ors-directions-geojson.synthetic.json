@@ -1,0 +1,25 @@
+{
+  "_fixture_note": "合成データ: openrouteservice Directions V2 (/geojson) の応答形式を模したテスト用fixture。実APIの応答・実際の経路ではない。",
+  "type": "FeatureCollection",
+  "bbox": [134.412701, 34.209458, 134.431107, 34.220318],
+  "features": [
+    {
+      "bbox": [134.412701, 34.209458, 134.431107, 34.220318],
+      "type": "Feature",
+      "properties": {
+        "summary": { "distance": 2184.6, "duration": 1572.9 },
+        "way_points": [0, 3]
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [134.412701, 34.220318],
+          [134.419, 34.2161],
+          [134.4255, 34.2122],
+          [134.431107, 34.209458]
+        ]
+      }
+    }
+  ],
+  "metadata": { "service": "routing", "query": { "profile": "foot-walking", "format": "geojson" } }
+}

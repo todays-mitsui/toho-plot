@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>歩き旅の地図</title>
+    <meta name="description" content="歩き旅ブログに記録した地点と、地点間の推定徒歩ルートを表示する地図です。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="歩き旅の地図" />
+    <meta property="og:description" content="歩き旅ブログに記録した地点と、地点間の推定徒歩ルートを表示する地図です。" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="stylesheet" href="./src/viewer/style.css" />
+  </head>
+  <body>
+    <div id="app" aria-live="polite">
+      <p class="status">読み込み中…</p>
+    </div>
+    <noscript>この地図の表示にはJavaScriptが必要です。</noscript>
+    <script type="module" src="./src/viewer/main.ts"></script>
+  </body>
+</html>

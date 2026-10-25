@@ -1,0 +1,391 @@
+:root {
+  --fg: #1f2328;
+  --muted: #59636e;
+  --bg: #ffffff;
+  --panel: #f6f8fa;
+  --border: #d1d9e0;
+  --accent: #d1242f;
+  --route: #0969da;
+  --focus: #0969da;
+  font-family: system-ui, -apple-system, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+  color: var(--fg);
+  background: var(--bg);
+  line-height: 1.6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+a {
+  color: var(--route);
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+#app {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.status {
+  padding: 1rem;
+}
+
+.status--error {
+  color: var(--accent);
+}
+
+.trip-list {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* --- header / footer --- */
+.header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  overflow-wrap: anywhere;
+}
+
+.header p {
+  margin: 0.25rem 0 0;
+}
+
+.header__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.header__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  align-items: center;
+}
+
+.header__notice,
+.footer {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.footer {
+  padding: 0.5rem 1rem 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.footer p {
+  margin: 0.25rem 0;
+}
+
+.notices:empty {
+  display: none;
+}
+
+.notice {
+  margin: 0;
+  padding: 0.5rem 1rem;
+  background: #fff8c5;
+  font-size: 0.9rem;
+}
+
+/* --- layout --- */
+.layout {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
+  min-height: 0;
+}
+
+.map-wrap {
+  position: relative;
+  min-width: 0;
+  min-height: 60vh;
+}
+
+.map {
+  position: absolute;
+  inset: 0;
+  background: #e5e9ec;
+}
+
+.panel {
+  border-left: 1px solid var(--border);
+  background: var(--panel);
+  overflow-y: auto;
+  max-height: calc(100vh - 8rem);
+}
+
+@media (max-width: 800px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .map-wrap {
+    min-height: 55vh;
+  }
+
+  .panel {
+    border-left: 0;
+    border-top: 1px solid var(--border);
+    max-height: none;
+  }
+}
+
+/* --- cards --- */
+.cards {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem;
+}
+
+.card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+}
+
+.card--selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+.card p {
+  margin: 0.25rem 0;
+}
+
+.card__meta {
+  font-weight: 600;
+}
+
+.card__comment,
+.embed-card__comment {
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.card__photo {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 4px;
+  background: var(--panel);
+}
+
+.photo-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  font-size: 0.85rem;
+}
+
+.copy {
+  padding: 0.1rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg);
+  font-size: 0.85rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.6em;
+  height: 1.6em;
+  padding: 0 0.3em;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.85em;
+}
+
+/* --- map pins / route --- */
+.pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid #fff;
+  color: #fff;
+  font: 600 12px/1 system-ui, sans-serif;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 40%);
+}
+
+.pin--selected {
+  background: #fff;
+  color: var(--accent);
+  border: 3px solid var(--accent);
+  box-shadow: 0 0 0 3px #fff, 0 2px 6px rgb(0 0 0 / 50%);
+}
+
+.route-line {
+  stroke: var(--route);
+}
+
+/* --- embed mode --- */
+body.embed {
+  height: 100%;
+}
+
+body.embed #app {
+  height: 100%;
+}
+
+body.embed .layout {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+
+body.embed .map-wrap {
+  min-height: 0;
+}
+
+body.embed .panel {
+  border-left: 0;
+  border-top: 1px solid var(--border);
+  max-height: none;
+  overflow: hidden;
+}
+
+.map-toggle {
+  position: absolute;
+  z-index: 1000;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 95%);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 25%);
+}
+
+.map-toggle--start {
+  left: 50%;
+  bottom: 1.75rem;
+  transform: translateX(-50%);
+}
+
+.map-toggle--end {
+  right: 0.5rem;
+  top: 0.5rem;
+}
+
+.map-toggle[hidden] {
+  display: none;
+}
+
+.map-wrap--active .map {
+  box-shadow: inset 0 0 0 3px var(--route);
+}
+
+.embed-card {
+  display: flex;
+  align-items: stretch;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  height: 96px;
+}
+
+.embed-card__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.embed-card__photo {
+  flex: none;
+  width: 116px;
+  height: 87px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.embed-card__text {
+  min-width: 0;
+  font-size: 0.85rem;
+}
+
+.embed-card__text p {
+  margin: 0 0 0.15rem;
+}
+
+.embed-card__comment {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.nav {
+  flex: none;
+  width: 2rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg);
+  font-size: 1.25rem;
+}
+
+.nav:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.embed-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.75rem;
+  padding: 0 0.5rem 0.25rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.embed-footer span {
+  margin-right: auto;
+}
+
+@media (max-width: 400px) {
+  .embed-card__photo {
+    width: 88px;
+    height: 66px;
+  }
+}
