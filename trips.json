@@ -1,10 +1,34 @@
 {
   "trips": [
     {
+      "tripId": "takamatsu-tokushima-20260314",
+      "title": "徒歩旅日記 (高松→徳島) - 1日目",
+      "articleUrl": "https://blog.mudatobunka.org/entry/2026/03/14/060000",
+      "journeyDate": "2026-03-14",
+      "timeZone": "Asia/Tokyo",
+      "routingProfile": "foot-walking"
+    },
+    {
       "tripId": "takamatsu-tokushima-20260315",
       "title": "徒歩旅日記 (高松→徳島) - 2日目",
       "articleUrl": "https://blog.mudatobunka.org/entry/2026/03/15/060000",
       "journeyDate": "2026-03-15",
+      "timeZone": "Asia/Tokyo",
+      "routingProfile": "foot-walking"
+    },
+    {
+      "tripId": "hakata-shimonoseki-20261031",
+      "title": "徒歩旅日記 (博多→下関) - 1日目",
+      "articleUrl": "https://blog.mudatobunka.org/entry/2026/10/31/060000",
+      "journeyDate": "2026-10-31",
+      "timeZone": "Asia/Tokyo",
+      "routingProfile": "foot-walking"
+    },
+    {
+      "tripId": "hakata-shimonoseki-20261101",
+      "title": "徒歩旅日記 (博多→下関) - 2日目",
+      "articleUrl": "https://blog.mudatobunka.org/entry/2026/11/01/060000",
+      "journeyDate": "2026-11-01",
       "timeZone": "Asia/Tokyo",
       "routingProfile": "foot-walking"
     }
