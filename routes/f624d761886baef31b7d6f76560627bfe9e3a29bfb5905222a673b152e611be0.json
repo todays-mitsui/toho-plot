@@ -1,0 +1,62 @@
+{
+  "cacheKey": "f624d761886baef31b7d6f76560627bfe9e3a29bfb5905222a673b152e611be0",
+  "provider": "openrouteservice",
+  "profile": "foot-walking",
+  "routingOptionsVersion": "directions-v2-geojson-1",
+  "request": {
+    "from": [
+      34.25306798165942,
+      134.3025021766263
+    ],
+    "to": [
+      34.25275169972901,
+      134.3044256359011
+    ],
+    "via": []
+  },
+  "geometry": {
+    "type": "LineString",
+    "coordinates": [
+      [
+        134.302501,
+        34.253066
+      ],
+      [
+        134.302477,
+        34.253081
+      ],
+      [
+        134.302498,
+        34.253122
+      ],
+      [
+        134.302517,
+        34.253159
+      ],
+      [
+        134.303063,
+        34.252988
+      ],
+      [
+        134.303525,
+        34.252886
+      ],
+      [
+        134.304428,
+        34.252763
+      ]
+    ]
+  },
+  "distanceMeters": 194,
+  "estimatedDurationSeconds": 139.7,
+  "routedAt": "2026-10-25T12:50:22.159Z",
+  "attribution": "© openrouteservice.org by HeiGIT | Map data © OpenStreetMap contributors",
+  "snappedFrom": [
+    134.302501,
+    34.253066
+  ],
+  "snappedTo": [
+    134.304428,
+    34.252763
+  ]
+}
