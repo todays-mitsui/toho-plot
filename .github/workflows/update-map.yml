@@ -6,17 +6,17 @@ on:
   workflow_dispatch:
     inputs:
       trip_id:
-        description: 'trips.json に登録済みの tripId'
+        description: "trips.json に登録済みの tripId"
         required: true
         type: string
-        default: takamatsu-tokushima-20260315
+        default: hakata-shimonoseki-20261031
       force_reroute:
-        description: 'この旅の全区間を再計算する'
+        description: "この旅の全区間を再計算する"
         required: false
         type: boolean
         default: false
       allow_removal:
-        description: '前回より地点数が減っても公開する'
+        description: "前回より地点数が減っても公開する"
         required: false
         type: boolean
         default: false
