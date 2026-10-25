@@ -34,7 +34,7 @@ export function createTripMap(
     tileErrorReported = true;
   });
   tiles.addTo(map);
-  for (const attribution of trip.attribution) map.attributionControl.addAttribution(escapeHtml(attribution));
+  for (const attribution of routingAttributionParts(trip.attribution)) map.attributionControl.addAttribution(escapeHtml(attribution));
 
   const bounds = L.latLngBounds([]);
   for (const segment of trip.segments) {
@@ -98,6 +98,16 @@ function pinIcon(number: number, selected: boolean): L.DivIcon {
     iconSize: [28, 28],
     iconAnchor: [14, 14],
   });
+}
+
+/**
+ * 徒歩ルートの出典を地図の出典欄用に分割する。
+ * タイルの出典ですでにOpenStreetMapを表示している場合は、同じOSMの表記を重ねて出さない。
+ */
+function routingAttributionParts(attributions: string[]): string[] {
+  const tileCreditsOsm = /openstreetmap/i.test(TILE_ATTRIBUTION);
+  const parts = attributions.flatMap((a) => a.split(' | ').map((part) => part.trim()));
+  return [...new Set(parts)].filter((part) => part && !(tileCreditsOsm && /openstreetmap/i.test(part)));
 }
 
 function escapeHtml(text: string): string {

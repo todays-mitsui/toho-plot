@@ -1,4 +1,6 @@
+// 自前のスタイルでLeafletの既定 (.leaflet-marker-icon { display: block } など) を上書きするため、この順で読み込む
 import 'leaflet/dist/leaflet.css';
+import './style.css';
 import { siteIndexSchema, tripDataSchema, type SiteIndex } from '../shared/schema.ts';
 import { h } from './dom.ts';
 import { renderTrip } from './trip-view.ts';
