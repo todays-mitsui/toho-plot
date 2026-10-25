@@ -7,6 +7,7 @@ const ESTIMATE_NOTICE = '徒歩ルートは記録地点間の推定です。実�
 
 export function renderTrip(app: HTMLElement, trip: TripData, { embed, pointId }: { embed: boolean; pointId: string | null }) {
   const distance = formatKm(trip.estimatedTotalDistanceMeters);
+  const elapsed = formatElapsed(trip);
   const notices = h('div', { class: 'notices', role: 'status' });
   const mapEl = h('div', { class: 'map', role: 'region', 'aria-label': '地図' });
   const panel = h('section', { class: 'panel', 'aria-label': '記録地点' });
@@ -53,15 +54,35 @@ export function renderTrip(app: HTMLElement, trip: TripData, { embed, pointId }:
     panel.append(list);
   }
 
-  // --- 埋め込みモード: 選択中の1地点だけのコンパクトなカード ---
+  // --- 埋め込みモード: 未選択なら旅の概要、選択中は1地点だけのコンパクトなカード ---
+  // 「‹」「›」で 概要 ↔ 地点1 ↔ 地点2 … と移動する
   const embedCard = h('div', { class: 'embed-card' });
   function renderEmbedCard() {
-    const index = Math.max(0, trip.points.findIndex((p) => p.id === selectedId));
-    const point = trip.points[index]!;
-    const prev = h('button', { type: 'button', class: 'nav', 'aria-label': '前の地点', disabled: index === 0 }, '‹');
+    const index = trip.points.findIndex((p) => p.id === selectedId);
+    const prev = h('button', { type: 'button', class: 'nav', 'aria-label': index === 0 ? '旅の概要' : '前の地点', disabled: index < 0 }, '‹');
     const next = h('button', { type: 'button', class: 'nav', 'aria-label': '次の地点', disabled: index === trip.points.length - 1 }, '›');
-    prev.addEventListener('click', () => select(trip.points[index - 1]!.id));
+    prev.addEventListener('click', () => select(trip.points[index - 1]?.id ?? null));
     next.addEventListener('click', () => select(trip.points[index + 1]!.id));
+    if (index < 0) {
+      embedCard.replaceChildren(
+        prev,
+        h(
+          'div',
+          { class: 'embed-card__body' },
+          h(
+            'div',
+            { class: 'embed-card__text' },
+            h('p', { class: 'embed-card__title' }, trip.title),
+            h('p', {}, `推定徒歩距離 ${distance}・${trip.points.length}地点`),
+            elapsed ? h('p', {}, `かかった時間 ${elapsed}`) : null,
+            h('p', { class: 'embed-card__hint' }, 'ピンか「›」で各地点の写真とコメントを表示'),
+          ),
+        ),
+        next,
+      );
+      return;
+    }
+    const point = trip.points[index]!;
     const photo = point.photos[0];
     embedCard.replaceChildren(
       prev,
@@ -87,20 +108,20 @@ export function renderTrip(app: HTMLElement, trip: TripData, { embed, pointId }:
       h(
         'div',
         { class: 'embed-footer' },
-        h('span', {}, `推定徒歩距離 ${distance}・ルートは推定`),
+        h('span', {}, '徒歩ルートは記録地点間の推定'),
         h('a', { href: trip.articleUrl, target: '_blank', rel: 'noopener' }, '元記事'),
         openLarge,
       ),
     );
   }
 
-  // 埋め込みでは地点カード欄を空にしないよう最初の地点を表示する（URLは変えない）
-  const initialId = pointId ?? (embed ? trip.points[0]!.id : null);
-  select(initialId, { updateHash: false });
+  // 地点別URLで開いたとき以外は、どの地点も選択しない
+  select(pointId, { updateHash: false });
 
   tripMap = createTripMap(mapEl, trip, {
     interactive: !embed,
     onSelect: (id) => select(id, { pan: false }),
+    onBackgroundClick: () => select(null, { pan: false, scroll: false }),
     onTileError: () =>
       notices.append(h('p', { class: 'notice' }, '地図タイルを読み込めませんでした。地点一覧と元記事へのリンクは引き続き利用できます。')),
   });
@@ -119,6 +140,7 @@ export function renderTrip(app: HTMLElement, trip: TripData, { embed, pointId }:
         'p',
         { class: 'header__meta' },
         h('span', {}, `推定徒歩距離 ${distance}`),
+        elapsed ? h('span', {}, `かかった時間 ${elapsed}`) : null,
         h('span', {}, `${trip.points.length}地点`),
         h('span', {}, `地図データ更新日時 ${formatDateTime(trip.generatedAt)}`),
       ),
@@ -153,7 +175,12 @@ function renderFooter(trip: TripData): HTMLElement {
   return h(
     'footer',
     { class: 'footer' },
-    h('p', {}, ESTIMATE_NOTICE, ' 合計は各区間の推定徒歩距離の和で、記録時刻の差とは関係ありません。'),
+    h(
+      'p',
+      {},
+      ESTIMATE_NOTICE,
+      ' 推定徒歩距離は各区間の推定距離の和です。かかった時間は最初と最後の記録時刻の差で、ルートからの推定ではありません。',
+    ),
     trip.attribution.length > 0 ? h('p', {}, `徒歩ルート: ${trip.attribution.join(' / ')}`) : null,
   );
 }
@@ -214,6 +241,16 @@ function formatTime(trip: TripData, point: Point): string {
 
 function formatDateTime(iso: string): string {
   return new Intl.DateTimeFormat('ja-JP', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Tokyo' }).format(new Date(iso));
+}
+
+/** 最初と最後の記録時刻の差。例: 11時間21分（07:06〜18:27） */
+function formatElapsed(trip: TripData): string | null {
+  const first = trip.points[0]!;
+  const last = trip.points.at(-1)!;
+  const minutes = Math.round((Date.parse(last.recordedAt) - Date.parse(first.recordedAt)) / 60_000);
+  if (trip.points.length < 2 || minutes <= 0) return null;
+  const duration = minutes >= 60 ? `${Math.floor(minutes / 60)}時間${minutes % 60}分` : `${minutes}分`;
+  return `${duration}（${formatTime(trip, first)}〜${formatTime(trip, last)}）`;
 }
 
 function formatKm(meters: number): string {

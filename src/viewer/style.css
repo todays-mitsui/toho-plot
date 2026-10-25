@@ -349,6 +349,18 @@ body.embed .panel {
   margin: 0 0 0.15rem;
 }
 
+.embed-card__title {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.embed-card__hint {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
 .embed-card__comment {
   display: -webkit-box;
   -webkit-line-clamp: 3;

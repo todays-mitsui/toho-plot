@@ -16,7 +16,12 @@ export interface TripMap {
 export function createTripMap(
   container: HTMLElement,
   trip: TripData,
-  { interactive, onSelect, onTileError }: { interactive: boolean; onSelect: (pointId: string) => void; onTileError: () => void },
+  {
+    interactive,
+    onSelect,
+    onBackgroundClick,
+    onTileError,
+  }: { interactive: boolean; onSelect: (pointId: string) => void; onBackgroundClick: () => void; onTileError: () => void },
 ): TripMap {
   const map = L.map(container, {
     dragging: interactive,
@@ -61,6 +66,8 @@ export function createTripMap(
   });
 
   map.fitBounds(bounds, { padding: [24, 24], maxZoom: 16 });
+  // ピンのクリックやドラッグ後のクリックは map の click にならないので、何もない場所のタップだけが届く
+  map.on('click', onBackgroundClick);
   // iframeの高さ変更や画面回転でコンテナの大きさが変わったらタイルを読み直す
   new ResizeObserver(() => map.invalidateSize()).observe(container);
 
