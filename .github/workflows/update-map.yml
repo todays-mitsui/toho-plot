@@ -20,6 +20,11 @@ on:
         required: false
         type: boolean
         default: false
+      total_distance_km:
+        description: "総距離 (km)。空欄なら前回の指定を引き継ぐ（未指定なら推定値）。clear で解除"
+        required: false
+        type: string
+        default: ""
 
 # 更新・公開を直列化する。実行中の保存・公開は途中キャンセルしない
 concurrency:
@@ -68,6 +73,7 @@ jobs:
           TRIP_ID: ${{ inputs.trip_id }}
           FORCE_REROUTE: ${{ inputs.force_reroute }}
           ALLOW_REMOVAL: ${{ inputs.allow_removal }}
+          TOTAL_DISTANCE_KM: ${{ inputs.total_distance_km }}
           DATA_DIR: data
           ROUTING_API_KEY: ${{ secrets.ROUTING_API_KEY }}
           ROUTING_API_BASE_URL: ${{ vars.ROUTING_API_BASE_URL }}

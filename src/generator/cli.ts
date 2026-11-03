@@ -1,8 +1,8 @@
 // 使い方は README を参照。
-//   node src/generator/cli.ts update --trip <tripId> --data-dir <dir> [--force-reroute] [--allow-removal] [--html-file <path>] [--dry-run]
+//   node src/generator/cli.ts update --trip <tripId> --data-dir <dir> [--force-reroute] [--allow-removal] [--total-distance-km <km|clear>] [--html-file <path>] [--dry-run]
 //   node src/generator/cli.ts parse --trip <tripId> [--html-file <path>]
 //   node src/generator/cli.ts routing-check [--trip <tripId>] [--html-file <path>] [--out <geojson>]
-// GitHub Actionsからは入力を環境変数 TRIP_ID / FORCE_REROUTE / ALLOW_REMOVAL で渡す。
+// GitHub Actionsからは入力を環境変数 TRIP_ID / FORCE_REROUTE / ALLOW_REMOVAL / TOTAL_DISTANCE_KM で渡す。
 import { appendFile, readFile, writeFile } from 'node:fs/promises';
 import { parseArgs } from 'node:util';
 import { haversineMeters, pointLatLng } from '../shared/geo.ts';
@@ -10,7 +10,7 @@ import { findTrip, loadTrips } from './config.ts';
 import { fetchArticle } from './fetch.ts';
 import { parseArticle } from './parse.ts';
 import { OpenRouteServiceProvider } from './routing/openrouteservice.ts';
-import { formatSummary, runUpdate } from './update.ts';
+import { formatSummary, parseTotalDistanceKm, runUpdate } from './update.ts';
 
 const { positionals, values } = parseArgs({
   allowPositionals: true,
@@ -20,6 +20,7 @@ const { positionals, values } = parseArgs({
     'html-file': { type: 'string' },
     'force-reroute': { type: 'boolean' },
     'allow-removal': { type: 'boolean' },
+    'total-distance-km': { type: 'string' },
     'dry-run': { type: 'boolean' },
     out: { type: 'string' },
   },
@@ -55,6 +56,7 @@ async function update() {
     dataDir: values['data-dir'] ?? env.DATA_DIR ?? 'data',
     forceReroute: values['force-reroute'] ?? env.FORCE_REROUTE === 'true',
     allowRemoval: values['allow-removal'] ?? env.ALLOW_REMOVAL === 'true',
+    totalDistanceMeters: parseTotalDistanceKm(values['total-distance-km'] ?? env.TOTAL_DISTANCE_KM),
     htmlFile: values['html-file'],
     dryRun: values['dry-run'],
   });

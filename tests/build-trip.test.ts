@@ -178,6 +178,23 @@ describe('buildTrip', () => {
     expect(result.trip.points[1]!.recordedAt).toBe('2026-03-15T06:00:00+09:00');
     expect(result.warnings.some((w) => w.includes('dateOverrides'))).toBe(true);
   });
+
+  it('明示的な総距離は保存され、未指定の再実行では引き継ぎ、nullで解除する', async () => {
+    const h = new Harness();
+    const first = await h.run(points(3));
+    expect(first.trip.totalDistanceMeters).toBeUndefined();
+
+    const set = await h.run(points(3), { totalDistanceMeters: 32_500 });
+    expect(set.changed).toBe(true);
+    expect(set.trip).toMatchObject({ totalDistanceMeters: 32_500, estimatedTotalDistanceMeters: 2000 });
+
+    const kept = await h.run(points(4));
+    expect(kept.trip.totalDistanceMeters).toBe(32_500);
+
+    const cleared = await h.run(points(4), { totalDistanceMeters: null });
+    expect(cleared.changed).toBe(true);
+    expect(cleared.trip.totalDistanceMeters).toBeUndefined();
+  });
 });
 
 describe('routeCacheKey', () => {

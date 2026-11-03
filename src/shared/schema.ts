@@ -83,6 +83,8 @@ export const tripDataSchema = z.object({
   points: z.array(pointSchema).min(1),
   segments: z.array(segmentSchema),
   estimatedTotalDistanceMeters: z.number().nonnegative(),
+  /** workflow入力で明示的に与えた総距離。あれば推定値より優先して表示する */
+  totalDistanceMeters: z.number().positive().optional(),
   attribution: z.array(z.string()),
 });
 

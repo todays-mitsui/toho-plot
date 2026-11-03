@@ -35,6 +35,8 @@ export interface BuildTripInput {
   cache: RouteCache;
   forceReroute?: boolean;
   allowRemoval?: boolean;
+  /** 明示的な総距離（メートル）。undefined: 前回の値を引き継ぐ / null: 解除する */
+  totalDistanceMeters?: number | null;
   now?: () => Date;
 }
 
@@ -84,6 +86,7 @@ export function routeCacheKey(spec: RoutingSpec, profile: string, from: LatLng, 
 export async function buildTrip(input: BuildTripInput): Promise<BuildTripResult> {
   const { trip, points, previous, overrides, spec, cache } = input;
   const now = input.now ?? (() => new Date());
+  const totalDistanceMeters = input.totalDistanceMeters === undefined ? previous?.totalDistanceMeters : input.totalDistanceMeters;
   const warnings: string[] = [];
 
   if (points.length === 0) throw new BuildTripError('地点が0件のため公開できません');
@@ -174,6 +177,7 @@ export async function buildTrip(input: BuildTripInput): Promise<BuildTripResult>
     points,
     segments,
     estimatedTotalDistanceMeters: Math.round(segments.reduce((sum, s) => sum + s.distanceMeters, 0)),
+    ...(totalDistanceMeters != null ? { totalDistanceMeters } : {}),
     attribution,
   };
 
