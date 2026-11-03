@@ -5,8 +5,8 @@
   "articleUrl": "https://blog.mudatobunka.org/entry/2026/10/31/060000",
   "journeyDate": "2026-10-31",
   "timeZone": "Asia/Tokyo",
-  "sourceContentHash": "2d44ed7c006b97a78d6bc7bd258573d123911c41b9739f0d6b8100e1d434cbfa",
-  "generatedAt": "2026-10-31T09:20:41.702Z",
+  "sourceContentHash": "b2c3c59d7be75425cf49d6a8a351e0c792f81d4b83a74b1a10e39a7b78b34d69",
+  "generatedAt": "2026-11-03T07:29:12.797Z",
   "points": [
     {
       "id": "20261031060000-0602-1",
@@ -219,23 +219,8 @@
       "originalMapUrl": "https://www.google.com/maps?q=33.76484449650235,130.5340513464023"
     },
     {
-      "id": "20261031060000-1316-1",
-      "order": 14,
-      "recordedAt": "2026-10-31T13:16:00+09:00",
-      "lat": 33.77888654668961,
-      "lng": 130.5541748799953,
-      "photos": [
-        {
-          "url": "https://cdn-ak.f.st-hatena.com/images/fotolife/t/todays_mitsui/20261031/20261031131638.jpg",
-          "alt": ""
-        }
-      ],
-      "comment": "28.4km地点。",
-      "originalMapUrl": "https://www.google.com/maps?q=33.77888654668961,130.5541748799953"
-    },
-    {
       "id": "20261031060000-1318-1",
-      "order": 15,
+      "order": 14,
       "recordedAt": "2026-10-31T13:18:00+09:00",
       "lat": 33.77904076189694,
       "lng": 130.5546322044251,
@@ -250,7 +235,7 @@
     },
     {
       "id": "20261031060000-1402-1",
-      "order": 16,
+      "order": 15,
       "recordedAt": "2026-10-31T14:02:00+09:00",
       "lat": 33.79271797297688,
       "lng": 130.5710691994839,
@@ -265,7 +250,7 @@
     },
     {
       "id": "20261031060000-1550-1",
-      "order": 17,
+      "order": 16,
       "recordedAt": "2026-10-31T15:50:00+09:00",
       "lat": 33.82656079444001,
       "lng": 130.6076087390838,
@@ -280,7 +265,7 @@
     },
     {
       "id": "20261031060000-1604-1",
-      "order": 18,
+      "order": 17,
       "recordedAt": "2026-10-31T16:04:00+09:00",
       "lat": 33.83221688490284,
       "lng": 130.6140089021478,
@@ -295,7 +280,7 @@
     },
     {
       "id": "20261031060000-1623-1",
-      "order": 19,
+      "order": 18,
       "recordedAt": "2026-10-31T16:23:00+09:00",
       "lat": 33.83949303966148,
       "lng": 130.6225286347118,
@@ -310,7 +295,7 @@
     },
     {
       "id": "20261031060000-1702-1",
-      "order": 20,
+      "order": 19,
       "recordedAt": "2026-10-31T17:02:00+09:00",
       "lat": 33.84499902446264,
       "lng": 130.6442458633005,
@@ -325,7 +310,7 @@
     },
     {
       "id": "20261031060000-1716-1",
-      "order": 21,
+      "order": 20,
       "recordedAt": "2026-10-31T17:16:00+09:00",
       "lat": 33.84661384510414,
       "lng": 130.6527654999041,
@@ -340,7 +325,7 @@
     },
     {
       "id": "20261031060000-1731-1",
-      "order": 22,
+      "order": 21,
       "recordedAt": "2026-10-31T17:31:00+09:00",
       "lat": 33.84696304637159,
       "lng": 130.6630056317817,
@@ -355,7 +340,7 @@
     },
     {
       "id": "20261031060000-1756-1",
-      "order": 23,
+      "order": 22,
       "recordedAt": "2026-10-31T17:56:00+09:00",
       "lat": 33.84928928716928,
       "lng": 130.6812785333032,
@@ -370,7 +355,7 @@
     },
     {
       "id": "20261031060000-1816-1",
-      "order": 24,
+      "order": 23,
       "recordedAt": "2026-10-31T18:16:00+09:00",
       "lat": 33.85237515173318,
       "lng": 130.6944865123631,
@@ -4705,9 +4690,9 @@
     },
     {
       "fromPointId": "20261031060000-1232-1",
-      "toPointId": "20261031060000-1316-1",
+      "toPointId": "20261031060000-1318-1",
       "method": "routed",
-      "routeCacheKey": "0864fc401035caee5ae41b51e6665520fdad617e8684312ee38365b422c16eb8",
+      "routeCacheKey": "95aa46d404cabab2781b49f49a2a6695a4cba2737fd2f4a65c05078a8c17a4f4",
       "geometry": {
         "type": "LineString",
         "coordinates": [
@@ -5092,14 +5077,14 @@
             33.77885
           ],
           [
-            130.554177,
-            33.778841
+            130.554577,
+            33.779061
           ]
         ]
       },
-      "distanceMeters": 2829,
-      "estimatedDurationSeconds": 2036.9,
-      "routedAt": "2026-10-31T09:20:25.693Z",
+      "distanceMeters": 2828.2,
+      "estimatedDurationSeconds": 2036.3,
+      "routedAt": "2026-11-03T07:29:12.791Z",
       "provider": "openrouteservice",
       "profile": "foot-walking",
       "attribution": "© openrouteservice.org by HeiGIT | Map data © OpenStreetMap contributors",
@@ -5107,44 +5092,6 @@
       "snappedFrom": [
         130.534055,
         33.764823
-      ],
-      "snappedTo": [
-        130.554177,
-        33.778841
-      ]
-    },
-    {
-      "fromPointId": "20261031060000-1316-1",
-      "toPointId": "20261031060000-1318-1",
-      "method": "routed",
-      "routeCacheKey": "d33c6d616254a03783cc501a98ff714b99245c6ce30c641cd04eb5b572a11cba",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [
-            130.554177,
-            33.778841
-          ],
-          [
-            130.554463,
-            33.77885
-          ],
-          [
-            130.554577,
-            33.779061
-          ]
-        ]
-      },
-      "distanceMeters": 52.4,
-      "estimatedDurationSeconds": 37.7,
-      "routedAt": "2026-10-31T09:20:27.292Z",
-      "provider": "openrouteservice",
-      "profile": "foot-walking",
-      "attribution": "© openrouteservice.org by HeiGIT | Map data © OpenStreetMap contributors",
-      "routingOptionsVersion": "directions-v2-geojson-1",
-      "snappedFrom": [
-        130.554177,
-        33.778841
       ],
       "snappedTo": [
         130.554577,
@@ -7806,7 +7753,8 @@
       ]
     }
   ],
-  "estimatedTotalDistanceMeters": 55770,
+  "estimatedTotalDistanceMeters": 55717,
+  "totalDistanceMeters": 45700,
   "attribution": [
     "© openrouteservice.org by HeiGIT | Map data © OpenStreetMap contributors"
   ]
