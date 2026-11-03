@@ -2,7 +2,7 @@ import { mkdtemp, readdir, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { runUpdate, type UpdateOptions } from '../src/generator/update.ts';
+import { parseTotalDistanceKm, runUpdate, type UpdateOptions } from '../src/generator/update.ts';
 import { DataStore } from '../src/generator/store.ts';
 import { articleHtml, FakeProvider, TRIP, type LogEntry } from './helpers.ts';
 
@@ -116,5 +116,21 @@ describe('fetchArticle', () => {
     await expect(
       fetchArticle('https://example.hatenablog.com/entry/1', { allowedHosts: new Set(['example.hatenablog.com']), fetch: fakeFetch }),
     ).rejects.toThrow(/trips\.json の articleUrl を転送先/);
+  });
+});
+
+describe('parseTotalDistanceKm', () => {
+  it('空欄は引き継ぎ、clearは解除、数値はメートルに変換する', () => {
+    expect(parseTotalDistanceKm(undefined)).toBeUndefined();
+    expect(parseTotalDistanceKm(' ')).toBeUndefined();
+    expect(parseTotalDistanceKm('clear')).toBeNull();
+    expect(parseTotalDistanceKm('32.5')).toBe(32_500);
+    expect(parseTotalDistanceKm(' 40 ')).toBe(40_000);
+  });
+
+  it('不正な値はエラーにする', () => {
+    for (const raw of ['0', '-1', 'abc', '1e3', '32,5', '10000']) {
+      expect(() => parseTotalDistanceKm(raw)).toThrow(/総距離/);
+    }
   });
 });

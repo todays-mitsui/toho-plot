@@ -6,7 +6,7 @@ import { readPointHash, replacePointHash, shareUrl } from './url.ts';
 const ESTIMATE_NOTICE = '徒歩ルートは記録地点間の推定です。実際に歩いた道とは異なる場合があります。';
 
 export function renderTrip(app: HTMLElement, trip: TripData, { embed, pointId }: { embed: boolean; pointId: string | null }) {
-  const distance = formatKm(trip.estimatedTotalDistanceMeters);
+  const distance = formatDistance(trip);
   const elapsed = formatElapsed(trip);
   const notices = h('div', { class: 'notices', role: 'status' });
   const mapEl = h('div', { class: 'map', role: 'region', 'aria-label': '地図' });
@@ -73,7 +73,7 @@ export function renderTrip(app: HTMLElement, trip: TripData, { embed, pointId }:
             'div',
             { class: 'embed-card__text' },
             h('p', { class: 'embed-card__title' }, trip.title),
-            h('p', {}, `推定徒歩距離 ${distance}・${trip.points.length}地点`),
+            h('p', {}, `${distance}・${trip.points.length}地点`),
             elapsed ? h('p', {}, `かかった時間 ${elapsed}`) : null,
             h('p', { class: 'embed-card__hint' }, 'ピンか「›」で各地点の写真とコメントを表示'),
           ),
@@ -139,7 +139,7 @@ export function renderTrip(app: HTMLElement, trip: TripData, { embed, pointId }:
       h(
         'p',
         { class: 'header__meta' },
-        h('span', {}, `推定徒歩距離 ${distance}`),
+        h('span', {}, distance),
         elapsed ? h('span', {}, `かかった時間 ${elapsed}`) : null,
         h('span', {}, `${trip.points.length}地点`),
         h('span', {}, `地図データ更新日時 ${formatDateTime(trip.generatedAt)}`),
@@ -179,7 +179,10 @@ function renderFooter(trip: TripData): HTMLElement {
       'p',
       {},
       ESTIMATE_NOTICE,
-      ' 推定徒歩距離は各区間の推定距離の和です。かかった時間は最初と最後の記録時刻の差で、ルートからの推定ではありません。',
+      trip.totalDistanceMeters !== undefined
+        ? ' 徒歩距離は別途計測した値で、地図上のルートの長さとは一致しない場合があります。'
+        : ' 推定徒歩距離は各区間の推定距離の和です。',
+      'かかった時間は最初と最後の記録時刻の差で、ルートからの推定ではありません。',
     ),
     trip.attribution.length > 0 ? h('p', {}, `徒歩ルート: ${trip.attribution.join(' / ')}`) : null,
   );
@@ -251,6 +254,13 @@ function formatElapsed(trip: TripData): string | null {
   if (trip.points.length < 2 || minutes <= 0) return null;
   const duration = minutes >= 60 ? `${Math.floor(minutes / 60)}時間${minutes % 60}分` : `${minutes}分`;
   return `${duration}（${formatTime(trip, first)}〜${formatTime(trip, last)}）`;
+}
+
+/** 明示的に与えた総距離があればそれを、なければ推定値を表示する */
+function formatDistance(trip: TripData): string {
+  return trip.totalDistanceMeters !== undefined
+    ? `徒歩距離 ${formatKm(trip.totalDistanceMeters)}`
+    : `推定徒歩距離 ${formatKm(trip.estimatedTotalDistanceMeters)}`;
 }
 
 function formatKm(meters: number): string {

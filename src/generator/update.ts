@@ -14,6 +14,8 @@ export interface UpdateOptions {
   dataDir: string;
   forceReroute?: boolean;
   allowRemoval?: boolean;
+  /** 明示的な総距離（メートル）。undefined: 前回の値を引き継ぐ / null: 解除する */
+  totalDistanceMeters?: number | null;
   /** 記事を取得せずにローカルのHTMLを使う（開発・テスト用） */
   htmlFile?: string;
   /** 結果を保存しない */
@@ -68,6 +70,7 @@ export async function runUpdate(options: UpdateOptions): Promise<UpdateResult> {
       cache: store,
       forceReroute: options.forceReroute,
       allowRemoval: options.allowRemoval,
+      totalDistanceMeters: options.totalDistanceMeters,
     });
   } catch (error) {
     // 取得済みのルートだけ保存し、次回の再実行で再利用する。trip.json（公開データ）は変更しない
@@ -103,6 +106,7 @@ export function formatSummary(result: UpdateResult, siteUrl?: string): string {
     `| APIで計算した区間 | ${stats.routedSegments} |`,
     `| 同一座標の区間 | ${stats.identicalPointSegments} |`,
     `| 推定徒歩距離 | ${(trip.estimatedTotalDistanceMeters / 1000).toFixed(1)} km |`,
+    `| 指定した総距離 | ${trip.totalDistanceMeters !== undefined ? `${(trip.totalDistanceMeters / 1000).toFixed(1)} km` : 'なし（推定値を表示）'} |`,
     `| 内容の変更 | ${result.changed ? 'あり' : 'なし'} |`,
     `| 地図データ更新日時 | ${trip.generatedAt} |`,
   ];
@@ -111,4 +115,19 @@ export function formatSummary(result: UpdateResult, siteUrl?: string): string {
     lines.push('', '### 確認が必要な箇所', '', ...result.warnings.map((w) => `- ${w}`));
   }
   return `${lines.join('\n')}\n`;
+}
+
+/**
+ * workflow入力の総距離（km）を解釈する。
+ * 空欄: 前回の値を引き継ぐ（undefined） / "clear": 解除する（null） / 正の数: その距離（メートル）
+ */
+export function parseTotalDistanceKm(raw: string | undefined): number | null | undefined {
+  const value = raw?.trim() ?? '';
+  if (value === '') return undefined;
+  if (value.toLowerCase() === 'clear') return null;
+  const km = /^\d+(\.\d+)?$/.test(value) ? Number(value) : NaN;
+  if (!(km > 0 && km < 10_000)) {
+    throw new Error(`総距離は km 単位の正の数（例: 32.5）か clear で指定してください: "${value}"`);
+  }
+  return Math.round(km * 1000);
 }
